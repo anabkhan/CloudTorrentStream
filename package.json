@@ -1,0 +1,18 @@
+{
+  "name": "CloudTorrentStream",
+  "version": "1.0.0",
+  "description": "",
+  "main": "web-torrent.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "parse-torrent": "^9.1.0",
+    "torrent-stream": "^1.2.1",
+    "webtorrent": "^0.112.0"
+  }
+}
