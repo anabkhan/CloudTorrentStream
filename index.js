@@ -48,6 +48,8 @@ app.get('/listFiles', function (req, res) {
   client.add(req.query.torrent, function (torrent) {
   console.log('torrent.files');
   //  res.end(torrent.files[i])
+  torrent.files.forEach(file => file.deselect());
+  torrent.deselect(0, torrent.pieces.length - 1, false);
   //torrent.deselect(0, torrent.pieces.length - 1, false)
   var response = [];
    for (i = 0; i < torrent.files.length; i++) {
@@ -67,7 +69,8 @@ app.get('/getData', function (req, res) {
   var client = new WebTorrent()
   console.log(req.query)
   client.add(req.query.torrent, function (torrent) {
-  torrent.deselect(0, torrent.pieces.length - 1, false)
+  torrent.files.forEach(file => file.deselect());
+  torrent.deselect(0, torrent.pieces.length - 1, false);
 
   var file = torrent.files[req.query.fileIndex];
   console.log(file.name)
