@@ -52,7 +52,7 @@ app.get('/getData', function (req, res) {
   var id  = req.query.id;
   var fileIndex = req.query.fileIndex;
   var torrent = client.get(id);
-  var fileName = req.query.filename;
+  var fileName = req.query.fileName;
   if(torrent) {
     console.log('torrent is present');
     streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName);
