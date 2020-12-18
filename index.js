@@ -69,6 +69,7 @@ app.get('/getData', function (req, res) {
 });
 
 function streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName) {
+  deselctTorrentFiles(torrent);
   console.log('check with fileName = ', fileName)
   if(fileName) {
     fileName = fileName.trim().replace(/ /g,'');
