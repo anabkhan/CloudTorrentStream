@@ -50,24 +50,37 @@ app.get('/getData', function (req, res) {
   console.log(req.query);
   // check if client has the torrent already
   var id  = req.query.id;
+  var fileIndex = req.query.fileIndex;
   var torrent = client.get(id);
+  var fileName = req.query.filename;
+  if(fileName) {
+    fileName = fileName..trim().replaceAll(' ','');
+    for (i = 0; i < torrent.files.length; i++) {
+      var file = torrent.files[i];
+      console.log(file.name)
+      if(file.name.trim().replaceAll(' ','') === fileName) {
+        fileIndex = i;
+        break;
+      }
+    }
+  }
   if(torrent) {
     console.log('torrent is present', torrent);
-    streamTorrentFileToResponse(req, res, torrent);
+    streamTorrentFileToResponse(req, res, torrent, fileIndex);
   } else {
     console.log('torrent not present in client');
     // res.end('invalid torrent id');
     getTorrentFileLink('magnet:?xt=urn:btih:'+id.toUpperCase(), (torrentLink) => {
       client.add(torrentLink, function (torrent) {
         deselctTorrentFiles(torrent);
-        streamTorrentFileToResponse(req, res, torrent);
+        streamTorrentFileToResponse(req, res, torrent, fileIndex);
       })      
     })
   }
 });
 
-function streamTorrentFileToResponse(req, res, torrent) {
-  var file = torrent.files[req.query.fileIndex];
+function streamTorrentFileToResponse(req, res, torrent, fileIndex) {
+  var file = torrent.files[fileIndex];
   console.log(file.name);
   var range = req.headers.range;
   var total = file.length;
