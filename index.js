@@ -75,6 +75,7 @@ function streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName) {
       var file = torrent.files[i];
       console.log(file.name)
       if(file.name.trim().replaceAll(' ','') === fileName) {
+        console.log('fileIndex found at',i);
         fileIndex = i;
         break;
       }
