@@ -11,7 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "form-data": "^3.0.0",
     "parse-torrent": "^9.1.0",
+    "rimraf": "^3.0.2",
     "torrent-stream": "^1.2.1",
     "webtorrent": "^0.112.0"
   }
