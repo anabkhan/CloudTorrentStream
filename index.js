@@ -114,4 +114,6 @@ async function deselctTorrentFiles(torrent) {
   torrent.files.forEach(file => file.deselect());
   torrent.deselect(0, torrent.pieces.length - 1, false);
   console.log(torrent.path);
+  var rimraf = require("rimraf");
+  rimraf(torrent.path, function () { console.log("deleted",torrent.path); });
 }
