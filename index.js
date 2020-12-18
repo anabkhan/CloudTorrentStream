@@ -54,7 +54,7 @@ app.get('/getData', function (req, res) {
   var torrent = client.get(id);
   var fileName = req.query.filename;
   if(fileName) {
-    fileName = fileName..trim().replaceAll(' ','');
+    fileName = fileName.trim().replaceAll(' ','');
     for (i = 0; i < torrent.files.length; i++) {
       var file = torrent.files[i];
       console.log(file.name)
