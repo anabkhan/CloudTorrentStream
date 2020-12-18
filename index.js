@@ -49,14 +49,15 @@ function getTorrentFileLink(magnetStr, onSuccess) {
 app.get('/getData', function (req, res) {
   console.log(req.query);
   // check if client has the torrent already
-  var torrent = client.get(req.query.id);
+  var id  = req.query.id;
+  var torrent = client.get(id);
   if(torrent) {
     console.log('torrent is present', torrent);
     streamTorrentFileToResponse(req, res, torrent);
   } else {
     console.log('torrent not present in client');
     // res.end('invalid torrent id');
-    getTorrentFileLink(req.query.magnet, (torrentLink) => {
+    getTorrentFileLink('magnet:?xt=urn:btih:'+id.toUpperCase(), (torrentLink) => {
       client.add(torrentLink, function (torrent) {
         deselctTorrentFiles(torrent);
         streamTorrentFileToResponse(req, res, torrent);
