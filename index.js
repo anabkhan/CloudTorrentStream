@@ -54,7 +54,7 @@ app.get('/getData', function (req, res) {
   var torrent = client.get(id);
   var fileName = req.query.filename;
   if(torrent) {
-    console.log('torrent is present', torrent);
+    console.log('torrent is present');
     streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName);
   } else {
     console.log('torrent not present in client');
