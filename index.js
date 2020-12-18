@@ -71,11 +71,11 @@ app.get('/getData', function (req, res) {
 function streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName) {
   console.log('check with fileName = ', fileName)
   if(fileName) {
-    fileName = fileName.trim().replaceAll(' ','');
+    fileName = fileName.trim().replace(/ /g,'');
     for (i = 0; i < torrent.files.length; i++) {
       var file = torrent.files[i];
       console.log('checking fileName',file.name)
-      if(file.name.trim().replaceAll(' ','') === fileName) {
+      if(file.name.trim().replace(/ /g,'') === fileName) {
         console.log('fileIndex found at',i);
         fileIndex = i;
         break;
