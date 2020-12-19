@@ -1,6 +1,20 @@
-var torrentStream = require('torrent-stream');
+// var torrentStream = require('torrent-stream');
 
-const parseTorrent = require('parse-torrent')
+// const parseTorrent = require('parse-torrent')
+// parseTorrent.remote('https://webtorrent.io/torrents/sintel.torrent', { timeout: 60 * 1000 }, (err, parsedTorrent) => {
+//   if (err) throw err
+//   // console.log(parsedTorrent)
+//   var engine = torrentStream(parsedTorrent);
+
+//   engine.on('ready', function() {
+//     engine.files.forEach(function(file) {
+//       console.log('filename:', file.name);
+//       var stream = file.createReadStream();
+//       // stream is readable stream to containing the file content
+//       console.log(stream)
+//     });
+//   });
+// })
 
 var WebTorrent = require('webtorrent')
 const https = require('https')
@@ -50,42 +64,44 @@ function getTorrentFileLink(magnetStr, onSuccess) {
     });
 }
 
-var engines;
-
 app.get('/getData', function (req, res) {
   console.log(req.query);
   // check if client has the torrent already
   var id  = req.query.id;
   var fileIndex = req.query.fileIndex;
+  var torrent = client.get(id);
   var fileName = req.query.fileName;
-  fileName = fileName.trim().replace(/ /g,'');
-  var engine = engines[id];
-  if(engine) {
-    streamTorrentFileToResponse(req, res, fileName, engine);
+  if(torrent) {
+    console.log('torrent is present');
+    streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName);
   } else {
+    console.log('torrent not present in client');
+    // res.end('invalid torrent id');
     getTorrentFileLink('magnet:?xt=urn:btih:'+id.toUpperCase(), (torrentLink) => {
-      console.log('torrent link', torrentLink);
-      parseTorrent.remote(torrentLink, { timeout: 60 * 1000 }, (err, parsedTorrent) => {
-        if (err) throw err
-        engine = torrentStream(parsedTorrent);
-        engines[id] = engine;
-        engine.on('ready', function() {
-          streamTorrentFileToResponse(req, res, fileName, engine);
-        });
-      })  
-    });
+      client.add(torrentLink, function (torrent) {
+        deselctTorrentFiles(torrent);
+        streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName);
+      })      
+    })
   }
 });
 
-function streamTorrentFileToResponse(req, res, fileName, engine) {
-  var file;
-  engine.files.forEach(function(eachFile) {
-    if(eachFile.name.trim().replace(/ /g,'') === fileName) {
-      console.log('fileIndex found at',i);
-      file = eachFile;
-      break;
+function streamTorrentFileToResponse(req, res, torrent, fileIndex, fileName) {
+  deselctTorrentFiles(torrent);
+  console.log('check with fileName = ', fileName)
+  if(fileName) {
+    fileName = fileName.trim().replace(/ /g,'');
+    for (i = 0; i < torrent.files.length; i++) {
+      var file = torrent.files[i];
+      console.log('checking fileName',file.name)
+      if(file.name.trim().replace(/ /g,'') === fileName) {
+        console.log('fileIndex found at',i);
+        fileIndex = i;
+        break;
+      }
     }
-  });
+  }
+  var file = torrent.files[fileIndex];
   console.log(file.name);
   var range = req.headers.range;
   var total = file.length;
