@@ -119,11 +119,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     }
   );
   // console.log(stream)
-  // stream.pipe(res);
-  stream.on('data' , (chunk) => {
-    console.log(chunk);
-    res.write(chunk)
-  })
+  stream.pipe(res);
+  // stream.on('data' , (chunk) => {
+  //   console.log(chunk);
+  //   res.write(chunk)
+  // })
 }
 
 function getTorrentFiles(req, res, torrentId) {
