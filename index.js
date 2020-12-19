@@ -81,7 +81,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   var file;
   for (i = 0; i < engine.files.length; i++) {
       var eachFile = engine.files[i];
-      console.log('checking fileName',file.name)
+      console.log('checking fileName',eachFile.name)
       if(eachFile.name.trim().replace(/ /g,'') === fileName) {
       console.log('fileIndex found at',i);
       file = eachFile;
