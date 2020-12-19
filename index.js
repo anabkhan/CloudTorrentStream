@@ -119,7 +119,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   // );
   const { Readable } = require('stream'); 
 
-  const stream = new Readable();
+  const stream = new Readable({
+    read(size) {
+      console.log('read requested', size);
+    }
+  });
   engine.select(start, end, 1, () => {
     console.log('new piece completed')
   })
