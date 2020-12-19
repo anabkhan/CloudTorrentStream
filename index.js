@@ -78,6 +78,7 @@ app.get('/getData', function (req, res) {
 });
 
 function streamTorrentFileToResponse(req, res, fileName, engine) {
+  console.log(engine)
   var file;
   for (i = 0; i < engine.files.length; i++) {
       var eachFile = engine.files[i];
