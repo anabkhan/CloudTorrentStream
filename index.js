@@ -50,7 +50,7 @@ function getTorrentFileLink(magnetStr, onSuccess) {
     });
 }
 
-var engines;
+var engines = {};
 
 app.get('/getData', function (req, res) {
   console.log(req.query);
