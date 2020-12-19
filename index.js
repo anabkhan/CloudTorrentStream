@@ -95,7 +95,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   //     break;
   //   }
   // });
-  console.log(file.name);
+  console.log(file);
   var range = req.headers.range;
   var total = file.length;
   if(!range) {
@@ -117,7 +117,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       end
     }
   );
-  console.log(stream)
+  // console.log(stream)
   // stream.pipe(res);
   stream.on('data' , (chunk) => {
     console.log(chunk);
