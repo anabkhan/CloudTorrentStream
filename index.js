@@ -122,6 +122,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer', buffer);
+    stream.push(buffer);
   })
 
   stream.pipe(res);
