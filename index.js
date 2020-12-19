@@ -137,6 +137,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       if(piece) {
         this.push(piece);
       } else {
+        _waitingFor = _piece;
         return engine.critical(_piece, _critical)
       }
     }
@@ -152,6 +153,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     if(_waitingFor === index) {
       console.log('pushing buffer to stream')
       stream.push(buffer);
+      _waitingFor = -1;
     } else {
       pieces[index] = buffer;
     }
