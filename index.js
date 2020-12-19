@@ -111,12 +111,13 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
             "Content-Length": chunksize,
             "Content-Type": "video/mp4"
     });
-  stream = file.createReadStream(
+  var stream = file.createReadStream(
     {
       start,
       end
     }
   );
+  console.log(stream)
   stream.pipe(res);
 }
 
