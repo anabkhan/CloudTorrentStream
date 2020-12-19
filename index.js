@@ -98,7 +98,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   // });
   console.log(file.length);
   var range = req.headers.range;
-  var total = 10000;
+  var total = file.length;
   if(!range) {
     range = 'bytes=0-';
   }
@@ -119,10 +119,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     }
   );
   // console.log(stream)
-  stream.pipe(res);
-  // stream.on('data' , (chunk) => {
-  //   console.log(chunk);
-  // })
+  // stream.pipe(res);
+  stream.on('data' , (chunk) => {
+    console.log(chunk);
+    res.write(chunk)
+  })
 }
 
 function getTorrentFiles(req, res, torrentId) {
