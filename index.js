@@ -1,7 +1,19 @@
+// var schedule = require('node-schedule');
+// var date = new Date();
+//         // date += (24 * 60 * 60 * 1000);
+//         console.log(date)
+//         newDate = new Date(date.getTime() + 5000);
+//         console.log(newDate)
+//         var j = schedule.scheduleJob(newDate, function() {
+//           console.log('Deleting files on schedule');
+//           j.cancel();
+//         });
+//         console.log('j',j);
 var torrentStream = require('torrent-stream');
 const parseTorrent = require('parse-torrent')
 const https = require('https')
 var schedule = require('node-schedule');
+var rimraf = require("rimraf");
 
 var express = require('express');
 var app = express();
@@ -60,7 +72,6 @@ app.get('/getData', function (req, res) {
         date += (1 * 60 * 1000);
         var j = schedule.scheduleJob(date, function() {
           console.log('Deleting files on schedule');
-          var rimraf = require("rimraf");
           rimraf(engine.path, function () { console.log("deleted",engine.path); });
           rimraf(engine.path, function () { console.log("deleted",engine.path); });
           engine.destroy();
@@ -106,6 +117,13 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       end
     }
   );
+  rimraf(engine.path, function () { console.log("deleted",engine.path); });
+  rimraf(engine.path, function () { console.log("deleted",engine.path); });
+
+  engine.on('download', (index, buffer) => {
+    console.log('received buffer', buffer);
+  })
+
   stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
