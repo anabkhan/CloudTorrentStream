@@ -123,7 +123,8 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   startPiece = (offset / pieceLength) | 0;
   _piece = startPiece;
   pieces = [];
-  _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0
+  _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0;
+  _waitingFor = -1;
 
   const { Readable } = require('stream'); 
 
@@ -148,7 +149,12 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   engine.on('download', (index, buffer) => {
     console.log('received buffer index ' + index, buffer);
     // res.write(buffer);
-    pieces[index] = buffer;
+    if(_waitingFor === index) {
+      console.log('pushing buffer to stream')
+      stream.push(buffer);
+    } else {
+      pieces[index] = buffer;
+    }
     // stream.push(buffer);
   })
 
