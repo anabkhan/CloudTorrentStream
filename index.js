@@ -124,6 +124,10 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   //   console.log(chunk);
   //   res.write(chunk)
   // })
+  req.on("close", function() {
+    console.log('request closed');
+    stream.destroy();
+  });
 }
 
 function getTorrentFiles(req, res, torrentId) {
