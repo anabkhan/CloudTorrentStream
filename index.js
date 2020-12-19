@@ -117,13 +117,27 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   //     end
   //   }
   // );
+
+  var offset = start + file.offset;
+  var pieceLength = engine.torrent.pieceLength;
+  startPiece = (offset / pieceLength) | 0;
+  _piece = startPiece;
+  pieces = [];
+
   const { Readable } = require('stream'); 
 
-  // const stream = new Readable({
-  //   read(size) {
-  //     console.log('read requested', size);
-  //   }
-  // });
+  const stream = new Readable({
+    read() {
+      // read requested
+      var piece = pieces.splice(_piece++, 1)[0];
+      console.log('piece',piece);
+      if(piece) {
+        this.push(piece);
+      } else {
+        this.push(null);
+      }
+    }
+  });
   engine.select(start, end, 1, () => {
     console.log('new piece completed')
   })
@@ -131,11 +145,12 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer index ' + index, buffer);
-    res.write(buffer);
+    // res.write(buffer);
+    pieces[index] = buffer;
     // stream.push(buffer);
   })
 
-  // stream.pipe(res);
+  stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
     // stream.destroy();
