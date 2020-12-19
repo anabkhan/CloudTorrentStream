@@ -127,7 +127,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     // stream.push(buffer);
   })
 
-  stream.pipe(res);
+  // stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
     stream.destroy();
