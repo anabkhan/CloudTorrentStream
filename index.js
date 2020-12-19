@@ -79,13 +79,22 @@ app.get('/getData', function (req, res) {
 
 function streamTorrentFileToResponse(req, res, fileName, engine) {
   var file;
-  engine.files.forEach(function(eachFile) {
-    if(eachFile.name.trim().replace(/ /g,'') === fileName) {
+  for (i = 0; i < engine.files.length; i++) {
+      var eachFile = engine.files[i];
+      console.log('checking fileName',file.name)
+      if(eachFile.name.trim().replace(/ /g,'') === fileName) {
       console.log('fileIndex found at',i);
       file = eachFile;
       break;
     }
-  });
+  }
+  // engine.files.forEach(function(eachFile) {
+  //   if(eachFile.name.trim().replace(/ /g,'') === fileName) {
+  //     console.log('fileIndex found at',i);
+  //     file = eachFile;
+  //     break;
+  //   }
+  // });
   console.log(file.name);
   var range = req.headers.range;
   var total = file.length;
