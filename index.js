@@ -111,18 +111,20 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
             "Content-Length": chunksize,
             "Content-Type": "video/" + fileName.split('.').pop()
     });
-  var stream = file.createReadStream(
-    {
-      start,
-      end
-    }
-  );
-  rimraf(engine.path, function () { console.log("deleted",engine.path); });
+  // var stream = file.createReadStream(
+  //   {
+  //     start,
+  //     end
+  //   }
+  // );
+  engine.select(start, end, 1, () => {
+    console.log('new piece completed')
+  })
   rimraf(engine.path, function () { console.log("deleted",engine.path); });
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer', buffer);
-    stream.push(buffer);
+    // stream.push(buffer);
   })
 
   stream.pipe(res);
