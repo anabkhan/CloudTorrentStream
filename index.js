@@ -136,7 +136,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   req.on("close", function() {
     console.log('request closed');
     stream.destroy();
-    engine.deselect(start, end, 1, () => {
+    engine.deselectWithoutNotifyCheck(start, end, 1, () => {
       console.log('deselected engine')
     })
   });
