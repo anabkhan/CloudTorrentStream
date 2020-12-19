@@ -1,15 +1,9 @@
 var torrentStream = require('torrent-stream');
-
 const parseTorrent = require('parse-torrent')
-
-var WebTorrent = require('webtorrent')
 const https = require('https')
-var client = new WebTorrent()
-var magnetURI = 'https://itorrents.org/torrent/5AC3D859E9F6A9DAF341D48A58FD96D963359A5A.torrent'
 
 var express = require('express');
 var app = express();
-var fs = require("fs");
 
 app.get('/', function(req, res) {
   res.end('hello')
@@ -19,17 +13,6 @@ var server = app.listen(8080, function () {
    var host = server.address().address
    var port = server.address().port
    console.log("listening at http://%s:%s", host, port)
-})
-
-app.get('/listFiles', function (req, res) {
-  console.log(req.query)
-  if(req.query.torrent.startsWith('magnet:')) {
-      getTorrentFileLink(req.query.torrent, (torrentLink) => {
-        getTorrentFiles(req, res, torrentLink);
-      })
-  } else {
-    getTorrentFiles(req, res, req.query.torrent);
-  }
 })
 
 function getTorrentFileLink(magnetStr, onSuccess) {
@@ -54,7 +37,6 @@ var engines = {};
 
 app.get('/getData', function (req, res) {
   console.log(req.query);
-  // check if client has the torrent already
   var id  = req.query.id;
   var fileIndex = req.query.fileIndex;
   var fileName = req.query.fileName;
@@ -89,13 +71,6 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       break;
     }
   }
-  // engine.files.forEach(function(eachFile) {
-  //   if(eachFile.name.trim().replace(/ /g,'') === fileName) {
-  //     console.log('fileIndex found at',i);
-  //     file = eachFile;
-  //     break;
-  //   }
-  // });
   console.log(file.length);
   var range = req.headers.range;
   var total = file.length;
@@ -118,39 +93,9 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       end
     }
   );
-  // console.log(stream)
   stream.pipe(res);
-  // stream.on('data' , (chunk) => {
-  //   console.log(chunk);
-  //   res.write(chunk)
-  // })
   req.on("close", function() {
     console.log('request closed');
     stream.destroy();
   });
-}
-
-function getTorrentFiles(req, res, torrentId) {
-  client.add(torrentId, function (torrent) {
-    deselctTorrentFiles(torrent);
-    var response = [];
-    for (i = 0; i < torrent.files.length; i++) {
-      var file = torrent.files[i];
-      console.log(file.name)
-      response.push({
-        name: file.name,
-        progress: file.progress,
-        id: torrent.infoHash
-      });
-    }
-    res.end(JSON.stringify({response}))
-  })
-}
-
-async function deselctTorrentFiles(torrent) {
-  torrent.files.forEach(file => file.deselect());
-  torrent.deselect(0, torrent.pieces.length - 1, false);
-  console.log(torrent.path);
-  var rimraf = require("rimraf");
-  rimraf(torrent.path, function () { console.log("deleted",torrent.path); });
 }
