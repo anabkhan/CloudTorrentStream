@@ -95,7 +95,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     "Content-Range": "bytes " + start + "-" + end + "/" + total,
             "Accept-Ranges": "bytes",
             "Content-Length": chunksize,
-            "Content-Type": "video/mp4"
+            "Content-Type": "video/" + fileName.split('.').pop()
     });
   var stream = file.createReadStream(
     {
