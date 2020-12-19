@@ -98,7 +98,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   // });
   console.log(file);
   var range = req.headers.range;
-  var total = file.length;
+  var total = file.length | 10000;
   if(!range) {
     range = 'bytes=0-';
   }
@@ -115,7 +115,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   var stream = file.createReadStream(
     {
       start,
-      end:5000
+      end
     }
   );
   // console.log(stream)
