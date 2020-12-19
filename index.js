@@ -119,11 +119,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   // );
   const { Readable } = require('stream'); 
 
-  const stream = new Readable({
-    read(size) {
-      console.log('read requested', size);
-    }
-  });
+  // const stream = new Readable({
+  //   read(size) {
+  //     console.log('read requested', size);
+  //   }
+  // });
   engine.select(start, end, 1, () => {
     console.log('new piece completed')
   })
@@ -131,10 +131,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer', buffer);
-    stream.push(buffer);
+    res.write(buffer);
+    // stream.push(buffer);
   })
 
-  stream.pipe(res);
+  // stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
     stream.destroy();
