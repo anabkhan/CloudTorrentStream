@@ -114,7 +114,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   var stream = file.createReadStream(
     {
       start,
-      end:1000
+      end:10000
     }
   );
   // console.log(stream)
