@@ -114,11 +114,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   var stream = file.createReadStream(
     {
       start,
-      end
+      1000
     }
   );
   // console.log(stream)
-  // stream.pipe(res);
+  stream.pipe(res);
   stream.on('data' , (chunk) => {
     console.log(chunk);
   })
