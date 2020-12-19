@@ -56,12 +56,15 @@ app.get('/getData', function (req, res) {
           streamTorrentFileToResponse(req, res, fileName, engine);
         });
         var date = new Date();
-        date += (24 * 60 * 60 * 1000);
+        // date += (24 * 60 * 60 * 1000);
+        date += (1 * 60 * 1000);
         var j = schedule.scheduleJob(date, function() {
           console.log('Deleting files on schedule');
           var rimraf = require("rimraf");
           rimraf(engine.path, function () { console.log("deleted",engine.path); });
           rimraf(engine.path, function () { console.log("deleted",engine.path); });
+          engine.destroy();
+          engines[id] = null;
         });
         console.log('schedule task', j);
       })  
