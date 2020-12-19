@@ -97,5 +97,8 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   req.on("close", function() {
     console.log('request closed');
     stream.destroy();
+    var rimraf = require("rimraf");
+    rimraf(engine.path, function () { console.log("deleted",engine.path); });
+    rimraf(engine.path, function () { console.log("deleted",engine.path); });
   });
 }

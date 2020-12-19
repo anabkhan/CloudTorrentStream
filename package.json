@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "parse-torrent": "^9.1.0",
-    "torrent-stream": "^1.2.1",
+    "rimraf": "^3.0.2",
+    "torrent-stream": "^1.2.1"
   }
 }
