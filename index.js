@@ -130,7 +130,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   rimraf(engine.path, function () { console.log("deleted",engine.path); });
 
   engine.on('download', (index, buffer) => {
-    console.log('received buffer', buffer);
+    console.log('received buffer index ' + index, buffer);
     res.write(buffer);
     // stream.push(buffer);
   })
