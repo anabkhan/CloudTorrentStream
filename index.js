@@ -123,18 +123,20 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   startPiece = (offset / pieceLength) | 0;
   _piece = startPiece;
   pieces = [];
+  _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0
 
   const { Readable } = require('stream'); 
 
   const stream = new Readable({
     read() {
       // read requested
+      console.log('read requested for ', _piece);
       var piece = pieces.splice(_piece++, 1)[0];
-      console.log('piece',piece);
+      console.log('piece fetched',piece);
       if(piece) {
         this.push(piece);
       } else {
-        this.push(null);
+        return engine.critical(_piece, _critical)
       }
     }
   });
