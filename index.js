@@ -118,7 +118,10 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     }
   );
   console.log(stream)
-  stream.pipe(res);
+  // stream.pipe(res);
+  stream.on('data' , (chunk) => {
+    console.log(chunk);
+  })
 }
 
 function getTorrentFiles(req, res, torrentId) {
