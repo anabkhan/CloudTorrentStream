@@ -126,6 +126,8 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   pieces = {};
   _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0;
   _waitingFor = -1;
+  _offset = offset - this.startPiece * pieceLength;
+  console.log('_offset', _offset);
 
   const { Readable } = require('stream'); 
 
@@ -137,6 +139,10 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       console.log('piece fetched',piece);
       console.log('piece length',pieces.length);
       if(piece) {
+        if (_offset) {
+          buffer = buffer.slice(self._offset)
+          // _offset = 0
+        }
         this.push(piece);
         delete pieces[_piece];
         _piece++;
