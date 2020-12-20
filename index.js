@@ -163,6 +163,9 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     // res.write(buffer);
     if(_waitingFor === index) {
       console.log('pushing buffer to stream for', index);
+      if (_offset) {
+      buffer = buffer.slice(_offset)
+      }
       stream.push(buffer);
       _waitingFor = -1;
     } else {
