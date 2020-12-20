@@ -9,7 +9,7 @@
 //           j.cancel();
 //         });
 //         console.log('j',j);
-var torrentStream = require('./torrent-stream');
+var torrentStream = require('torrent-stream');
 const parseTorrent = require('parse-torrent')
 const https = require('https')
 var schedule = require('node-schedule');
@@ -111,83 +111,80 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
             "Content-Length": chunksize,
             "Content-Type": "video/" + fileName.split('.').pop()
     });
-  // var stream = file.createReadStream(
-  //   {
-  //     start,
-  //     end
-  //   }
-  // );
-
-  var offset = start + file.offset;
-  var pieceLength = engine.torrent.pieceLength;
-  startPiece = (offset / pieceLength) | 0;
-  _piece = startPiece;
-  console.log('start-piece',startPiece);
-  pieces = {};
-  _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0;
-  _waitingFor = -1;
-  _offset = offset - this.startPiece * pieceLength;
-  console.log('_offset', _offset);
-
-  const { Readable } = require('stream'); 
-
-  const stream = new Readable({
-    read() {
-      // read requested
-      console.log('read requested for ', _piece);
-      var piece = pieces[_piece];
-      console.log('piece fetched',piece);
-      console.log('piece length',pieces.length);
-      if(piece) {
-        if (_offset) {
-          piece = piece.slice(_offset)
-          // _offset = 0
-        }
-        this.push(piece);
-        delete pieces[_piece];
-        _piece++;
-      } else {
-        _waitingFor = _piece;
-        _piece++;
-        return engine.critical(_waitingFor, _critical)
-      }
+  var stream = file.createReadStream(
+    {
+      start,
+      end
     }
-  });
-  // engine.deselectAll();
-  engine.select(start, end, 1, () => {
-    // console.log('new piece completed')
-  })
-  // var stream1 = file.createReadStream(
-  //   {
-  //     start,
-  //     end
-  //   }
-  // );
-  // rimraf(engine.path, function () { console.log("deleted",engine.path); });
+  );
 
-  engine.on('download', (index, buffer) => {
-    console.log('received buffer index ' + index, buffer);
-    // res.write(buffer);
-    if(_waitingFor === index) {
-      console.log('pushing buffer to stream for', index);
-      if (_offset) {
-      buffer = buffer.slice(_offset)
-      }
-      stream.push(buffer);
-      _waitingFor = -1;
-    } else {
-      pieces[index] = buffer;
-      console.log('piece index '+ index + ' stored ', pieces[index]);
-    }
-    // stream.push(buffer);
-  })
+  // var offset = start + file.offset;
+  // var pieceLength = engine.torrent.pieceLength;
+  // startPiece = (offset / pieceLength) | 0;
+  // _piece = startPiece;
+  // console.log('start-piece',startPiece);
+  // pieces = {};
+  // _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0;
+  // _waitingFor = -1;
+  // _offset = offset - this.startPiece * pieceLength;
+  // console.log('_offset', _offset);
+
+  // const { Readable } = require('stream'); 
+
+  // const stream = new Readable({
+  //   read() {
+  //     // read requested
+  //     console.log('read requested for ', _piece);
+  //     var piece = pieces[_piece];
+  //     console.log('piece fetched',piece);
+  //     console.log('piece length',pieces.length);
+  //     if(piece) {
+  //       if (_offset) {
+  //         piece = piece.slice(_offset)
+  //         // _offset = 0
+  //       }
+  //       this.push(piece);
+  //       delete pieces[_piece];
+  //       _piece++;
+  //     } else {
+  //       _waitingFor = _piece;
+  //       _piece++;
+  //       return engine.critical(_waitingFor, _critical)
+  //     }
+  //   }
+  // });
+  // // engine.deselectAll();
+  // engine.select(start, end, 1, () => {
+  //   // console.log('new piece completed')
+  // })
+  // // var stream1 = file.createReadStream(
+  // //   {
+  // //     start,
+  // //     end
+  // //   }
+  // // );
+  // // rimraf(engine.path, function () { console.log("deleted",engine.path); });
+
+  // engine.on('download', (index, buffer) => {
+  //   console.log('received buffer index ' + index, buffer);
+  //   // res.write(buffer);
+  //   if(_waitingFor === index) {
+  //     console.log('pushing buffer to stream for', index);
+  //     if (_offset) {
+  //     buffer = buffer.slice(_offset)
+  //     }
+  //     stream.push(buffer);
+  //     _waitingFor = -1;
+  //   } else {
+  //     pieces[index] = buffer;
+  //     console.log('piece index '+ index + ' stored ', pieces[index]);
+  //   }
+  //   // stream.push(buffer);
+  // })
 
   stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
-    // engine.destroy();
-    engine.deselectAll();
     stream.destroy();
-    // stream1.destroy();
   });
 }
