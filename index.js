@@ -122,6 +122,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   var pieceLength = engine.torrent.pieceLength;
   startPiece = (offset / pieceLength) | 0;
   _piece = startPiece;
+  console.log('start-piece',startPiece);
   pieces = [];
   _critical = Math.min(1024 * 1024 / pieceLength, 2) | 0;
   _waitingFor = -1;
