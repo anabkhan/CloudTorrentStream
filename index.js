@@ -159,7 +159,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       _waitingFor = -1;
     } else {
       pieces[index] = buffer;
-      console.log('piece index '+ index + ' stored ' + pieces[index]);
+      console.log('piece index '+ index + ' stored ', pieces[index]);
     }
     // stream.push(buffer);
   })
