@@ -136,11 +136,12 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       console.log('piece fetched',piece);
       if(piece) {
         this.push(piece);
+        _piece++;
       } else {
         _waitingFor = _piece;
-        return engine.critical(_piece, _critical)
+        _piece++;
+        return engine.critical(_waitingFor, _critical)
       }
-      _piece++;
     }
   });
   engine.select(start, end, 1, () => {
