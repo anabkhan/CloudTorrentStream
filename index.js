@@ -151,7 +151,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     console.log('received buffer index ' + index, buffer);
     // res.write(buffer);
     if(_waitingFor === index) {
-      console.log('pushing buffer to stream')
+      console.log('pushing buffer to stream for', index);
       stream.push(buffer);
       _waitingFor = -1;
     } else {
