@@ -145,7 +145,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     }
   });
   engine.select(start, end, 1, () => {
-    console.log('new piece completed')
+    // console.log('new piece completed')
   })
   rimraf(engine.path, function () { console.log("deleted",engine.path); });
 
@@ -158,6 +158,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       _waitingFor = -1;
     } else {
       pieces[index] = buffer;
+      console.log('piece index '+ index + ' stored ' + pieces[index]);
     }
     // stream.push(buffer);
   })
