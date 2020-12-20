@@ -23,7 +23,7 @@ app.get('/', function(req, res) {
 })
 
 app.get('/deleteTemp', function(req, res) {
-  rimraf('tmm/torrent-stream', function () { console.log("deleted tmp") })
+  rimraf('/tmp/torrent-stream/', function () { console.log("deleted tmp") })
   res.end();
 })
 
