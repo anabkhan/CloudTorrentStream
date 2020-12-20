@@ -134,7 +134,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       console.log('read requested for ', _piece);
       var piece = pieces.splice(_piece, 1)[0];
       console.log('piece fetched',piece);
-      console.log('piece length',piece.length);
+      console.log('piece length',pieces.length);
       if(piece) {
         this.push(piece);
         _piece++;
