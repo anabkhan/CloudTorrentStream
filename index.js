@@ -22,6 +22,11 @@ app.get('/', function(req, res) {
   res.end('hello')
 })
 
+app.get('/deleteTemp', function(req, res) {
+  rimraf('tmm/torrent-stream', function () { console.log("deleted tmp") })
+  res.end();
+})
+
 var server = app.listen(8080, function () {
    var host = server.address().address
    var port = server.address().port
