@@ -188,6 +188,6 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     // engine.destroy();
     engine.deselectAll();
     stream.destroy();
-    stream1.destroy();
+    // stream1.destroy();
   });
 }
