@@ -140,7 +140,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       console.log('piece length',pieces.length);
       if(piece) {
         if (_offset) {
-          buffer = buffer.slice(self._offset)
+          piece = piece.slice(_offset)
           // _offset = 0
         }
         this.push(piece);
