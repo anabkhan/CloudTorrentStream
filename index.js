@@ -153,7 +153,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       }
     }
   });
-  engine.deselectAll();
+  // engine.deselectAll();
   engine.select(start, end, 1, () => {
     // console.log('new piece completed')
   })
