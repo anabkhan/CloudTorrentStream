@@ -153,11 +153,17 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       }
     }
   });
-  engine.deselectAll();
-  engine.select(start, end, 1, () => {
-    // console.log('new piece completed')
-  })
-  rimraf(engine.path, function () { console.log("deleted",engine.path); });
+  // engine.deselectAll();
+  // engine.select(start, end, 1, () => {
+  //   // console.log('new piece completed')
+  // })
+  var stream1 = file.createReadStream(
+    {
+      start,
+      end
+    }
+  );
+  // rimraf(engine.path, function () { console.log("deleted",engine.path); });
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer index ' + index, buffer);
@@ -179,8 +185,9 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
-    engine.destroy();
+    // engine.destroy();
     stream.destroy();
-    engine.deselectAll();
+    stream1.destroy();
+    // engine.deselectAll();
   });
 }
