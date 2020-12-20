@@ -132,7 +132,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     read() {
       // read requested
       console.log('read requested for ', _piece);
-      var piece = pieces.splice(_piece++, 1)[0];
+      var piece = pieces.splice(_piece, 1)[0];
       console.log('piece fetched',piece);
       if(piece) {
         this.push(piece);
@@ -140,6 +140,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
         _waitingFor = _piece;
         return engine.critical(_piece, _critical)
       }
+      _piece++;
     }
   });
   engine.select(start, end, 1, () => {
