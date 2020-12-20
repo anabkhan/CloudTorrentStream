@@ -153,16 +153,16 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       }
     }
   });
-  // engine.deselectAll();
-  // engine.select(start, end, 1, () => {
-  //   // console.log('new piece completed')
-  // })
-  var stream1 = file.createReadStream(
-    {
-      start,
-      end
-    }
-  );
+  engine.deselectAll();
+  engine.select(start, end, 1, () => {
+    // console.log('new piece completed')
+  })
+  // var stream1 = file.createReadStream(
+  //   {
+  //     start,
+  //     end
+  //   }
+  // );
   // rimraf(engine.path, function () { console.log("deleted",engine.path); });
 
   engine.on('download', (index, buffer) => {
