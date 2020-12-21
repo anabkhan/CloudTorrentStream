@@ -151,10 +151,10 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       console.log('piece fetched',piece);
       console.log('piece length',pieces.length);
       if(piece) {
-        if (_offset) {
-          piece = piece.slice(_offset)
-          // _offset = 0
-        }
+        // if (_offset) {
+        //   piece = piece.slice(_offset)
+        //   // _offset = 0
+        // }
         this.push(piece);
         delete pieces[_piece];
         _piece++;
@@ -173,9 +173,9 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     // res.write(buffer);
     if(_waitingFor === index) {
       console.log('pushing buffer to stream for', index);
-      if (_offset) {
-      buffer = buffer.slice(_offset)
-      }
+      // if (_offset) {
+      // buffer = buffer.slice(_offset)
+      // }
       stream.push(buffer);
       _waitingFor = -1;
     } else {
