@@ -184,6 +184,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
+    engine.destroy();
     engines = [];
     stream.destroy();
     engine.deselect(startPiece, endPiece, true, null)
