@@ -164,6 +164,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
         this.push(piece);
         delete pieces[_piece];
         _bufferPiecesLength--;
+        console.log('_bufferPiecesLength', _bufferPiecesLength);
         if(_bufferPiecesLength <= MIN_BUFFER_PIECES && _maxBufferReached) {
           // resume downloading
           engine.select(_nextPiece + 1, _nextPiece + MAX_BUFFER_PIECES, true, null)
@@ -196,6 +197,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       pieces[index] = buffer;
       _bufferPiecesLength++;
       if(_bufferPiecesLength >= MAX_BUFFER_PIECES) {
+        console.log('max buffer reached', _bufferPiecesLength);
         _maxBufferReached = true;
       }
       console.log('piece index '+ index + ' stored ', pieces[index]);
