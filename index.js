@@ -9,7 +9,7 @@
 //           j.cancel();
 //         });
 //         console.log('j',j);
-var torrentStream = require('torrent-stream');
+var torrentStream = require('./torrent-stream');
 const parseTorrent = require('parse-torrent')
 const https = require('https')
 var schedule = require('node-schedule');
