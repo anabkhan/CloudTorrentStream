@@ -19,7 +19,7 @@ var express = require('express');
 var app = express();
 
 app.get('/', function(req, res) {
-  res.end('hello')
+  res.end('Cloud Torrent Stream')
 })
 
 app.get('/deleteTemp', function(req, res) {
@@ -45,7 +45,6 @@ function getTorrentFileLink(magnetStr, onSuccess) {
         console.log(JSON.parse(data).url.split('<a')[0]);
         onSuccess(JSON.parse(data).url.split('<a')[0]);
       });
-
     }).on("error", (err) => {
       console.log("Error: " + err.message);
     });
@@ -72,17 +71,6 @@ app.get('/getData', function (req, res) {
         engine.on('ready', function() {
           streamTorrentFileToResponse(req, res, fileName, engine);
         });
-        var date = new Date();
-        // date += (24 * 60 * 60 * 1000);
-        date += (1 * 60 * 1000);
-        var j = schedule.scheduleJob(date, function() {
-          console.log('Deleting files on schedule');
-          rimraf(engine.path, function () { console.log("deleted",engine.path); });
-          rimraf(engine.path, function () { console.log("deleted",engine.path); });
-          engine.destroy();
-          engines[id] = null;
-        });
-        console.log('schedule task', j);
       })  
     });
   }
@@ -143,38 +131,27 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
 
   MAX_BUFFER_PIECES = Math.ceil(5000000 / pieceLength);
   MIN_BUFFER_PIECES = Math.ceil(2000000 / pieceLength);
-  _bufferPiecesLength = 0;
   var _nextPiece = startPiece + MAX_BUFFER_PIECES;
-  _maxBufferReached = false;
 
   const { Readable } = require('stream'); 
 
-  var bytesRead = 0;
   var currentPieceIndex = startPiece;
   const stream = new Readable({
     read() {
-      // read requested
       console.log('read requested for ', _piece);
       var piece = pieces[_piece];
-      console.log('piece fetched',piece);
-      console.log('piece length',pieces.length);
       if(piece) {
         if (_offset) {
           piece = piece.slice(_offset)
           _offset = 0
         }
         this.push(piece);
-        bytesRead++;
+        console.log('buffer fetched for ', _piece);
         delete pieces[_piece];
-        _bufferPiecesLength--;
-        console.log('_bufferPiecesLength', _bufferPiecesLength);
         if(_piece >= currentPieceIndex + MIN_BUFFER_PIECES) {
-          // resume downloading
           engine.select(_nextPiece + 1, _nextPiece + MAX_BUFFER_PIECES, true, null)
           currentPieceIndex = _nextPiece;
           _nextPiece = _nextPiece + MAX_BUFFER_PIECES
-          _maxBufferReached = false;
-
         }
         _piece++;
       } else {
@@ -184,12 +161,10 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       }
     }
   });
-  // engine.deselectAll();
+
   engine.select(startPiece, _nextPiece, true, null)
 
   engine.on('download', (index, buffer) => {
-    console.log('received buffer index ' + index, buffer);
-    // res.write(buffer);
     if(_waitingFor === index) {
       console.log('pushing buffer to stream for', index);
       if (_offset) {
@@ -200,22 +175,14 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       _waitingFor = -1;
     } else {
       pieces[index] = buffer;
-      _bufferPiecesLength++;
-      if(_bufferPiecesLength >= MAX_BUFFER_PIECES) {
-        console.log('max buffer reached', _bufferPiecesLength);
-        _maxBufferReached = true;
-      }
-      console.log('piece index '+ index + ' stored ', pieces[index]);
     }
-    // stream.push(buffer);
   })
 
   stream.pipe(res);
   req.on("close", function() {
     console.log('request closed');
     engine.destroy();
-    engines = [];
+    pieces = {};
     stream.destroy();
-    engine.deselect(startPiece, endPiece, true, null)
   });
 }
