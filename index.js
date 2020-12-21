@@ -141,6 +141,12 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   _offset = offset - startPiece * pieceLength;
   console.log('_offset', _offset);
 
+  MAX_BUFFER_PIECES = Math.ceil(5000000 / pieceLength);
+  MIN_BUFFER_PIECES = Math.ceil(2000000 / pieceLength);
+  _bufferPiecesLength = 0;
+  var _nextPiece = startPiece + MAX_BUFFER_PIECES;
+  _maxBufferReached = false;
+
   const { Readable } = require('stream'); 
 
   const stream = new Readable({
@@ -157,6 +163,13 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
         }
         this.push(piece);
         delete pieces[_piece];
+        _bufferPiecesLength--;
+        if(_bufferPiecesLength <= MIN_BUFFER_PIECES && _maxBufferReached) {
+          // resume downloading
+          engine.select(_nextPiece + 1, _nextPiece + MAX_BUFFER_PIECES, true, null)
+          _nextPiece = _nextPiece + MAX_BUFFER_PIECES
+          _maxBufferReached = false;
+        }
         _piece++;
       } else {
         _waitingFor = _piece;
@@ -166,7 +179,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     }
   });
   // engine.deselectAll();
-  engine.select(startPiece, endPiece, true, null)
+  engine.select(startPiece, _nextPiece, true, null)
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer index ' + index, buffer);
@@ -181,6 +194,10 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
       _waitingFor = -1;
     } else {
       pieces[index] = buffer;
+      _bufferPiecesLength++;
+      if(_bufferPiecesLength >= MAX_BUFFER_PIECES) {
+        _maxBufferReached = true;
+      }
       console.log('piece index '+ index + ' stored ', pieces[index]);
     }
     // stream.push(buffer);
