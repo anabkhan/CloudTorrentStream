@@ -149,6 +149,8 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
 
   const { Readable } = require('stream'); 
 
+  var bytesRead = 0;
+  var currentPieceIndex = startPiece;
   const stream = new Readable({
     read() {
       // read requested
@@ -162,14 +164,17 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
           _offset = 0
         }
         this.push(piece);
+        bytesRead++;
         delete pieces[_piece];
         _bufferPiecesLength--;
         console.log('_bufferPiecesLength', _bufferPiecesLength);
-        if(_bufferPiecesLength <= MIN_BUFFER_PIECES && _maxBufferReached) {
+        if(bytesRead >= currentPieceIndex + MIN_BUFFER_PIECES) {
           // resume downloading
           engine.select(_nextPiece + 1, _nextPiece + MAX_BUFFER_PIECES, true, null)
+          currentPieceIndex = _nextPiece;
           _nextPiece = _nextPiece + MAX_BUFFER_PIECES
           _maxBufferReached = false;
+
         }
         _piece++;
       } else {
