@@ -162,9 +162,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
     }
   });
   // engine.deselectAll();
-  engine.select(startPiece, endPiece, true, () => {
-    console.log('new piece completed')
-  })
+  engine.select(startPiece, endPiece, true, null)
 
   engine.on('download', (index, buffer) => {
     console.log('received buffer index ' + index, buffer);
@@ -187,5 +185,6 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   req.on("close", function() {
     console.log('request closed');
     stream.destroy();
+    engine.deselect(startPiece, endPiece, true, null)
   });
 }
