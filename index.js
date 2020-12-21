@@ -125,7 +125,11 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
   // );
 
   var offset = start + file.offset;
+  console.log('start', start)
+  console.log('file-offset', file.offset)
+  console.log('offset', offset)
   var pieceLength = engine.torrent.pieceLength;
+  console.log('pieceLength', pieceLength)
   startPiece = (offset / pieceLength) | 0;
   _piece = startPiece;
   endPiece = ((end + file.offset) / pieceLength) | 0;
