@@ -168,7 +168,7 @@ function streamTorrentFileToResponse(req, res, fileName, engine) {
         delete pieces[_piece];
         _bufferPiecesLength--;
         console.log('_bufferPiecesLength', _bufferPiecesLength);
-        if(bytesRead >= currentPieceIndex + MIN_BUFFER_PIECES) {
+        if(_piece >= currentPieceIndex + MIN_BUFFER_PIECES) {
           // resume downloading
           engine.select(_nextPiece + 1, _nextPiece + MAX_BUFFER_PIECES, true, null)
           currentPieceIndex = _nextPiece;
